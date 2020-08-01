@@ -1,0 +1,41 @@
+# sign in
+az login
+az account list
+az account set -s 3dea82b3-b58e-4478-a9c9-ee2d973577a8
+
+#get a resource group
+$rg=(az group list --query "[].name" --output tsv)
+
+#set defaults
+az configure --defaults location=westeurope group=$rg
+
+#create a storage account
+az storage account create -n "imgstoristvan" --sku "Standard_LRS"
+
+#get conn string
+az storage account show-connection-string --n "imgstoristvan"
+$stor_conn=...
+
+#create container
+az storage container create --connection-string $stor_conn -n "images" --public-access blob
+
+#upload file
+az storage blob upload --connection-string $stor_conn -f .\grilledcheese.jpg -c "images" -n "grilledcheese"
+
+#create app service plan
+$appplan="appservice-istvan"
+az appservice plan create --sku F1 -n $appplan
+
+#create webapp
+$appname="imgapi-istvan"
+az webapp create -n $appname -p $appplan
+
+#configure the web app
+az webapp config appsettings set -n $appname --settings StorageConnectionString=$stor_conn
+
+#deploy zip file
+az webapp deployment source config-zip --src api.zip
+--name $appname
+
+#clean up
+az group delete -g $rg --no-wait -y
