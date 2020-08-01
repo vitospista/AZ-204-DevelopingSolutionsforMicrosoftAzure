@@ -34,8 +34,7 @@ az webapp create -n $appname -p $appplan
 az webapp config appsettings set -n $appname --settings StorageConnectionString=$stor_conn
 
 #deploy zip file
-az webapp deployment source config-zip --src api.zip
---name $appname
+az webapp deployment source config-zip --src api.zip --name $appname
 
 #clean up
 az group delete -g $rg --no-wait -y
