@@ -7,7 +7,7 @@ namespace AdventureWorks.Context
 {
     public interface IAdventureWorksProductContext
     {
-        Task<Model> FindModelAsync(Guid id);
+        Task<Model> FindModelAsync(Guid id, string category);
 
         Task<List<Model>> GetModelsAsync();
 

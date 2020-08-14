@@ -21,7 +21,7 @@ namespace AdventureWorks.Context
 
         public DbSet<Product> Products { get; set; }
 
-        public async Task<Model> FindModelAsync(Guid id)
+        public async Task<Model> FindModelAsync(Guid id, string category)
         {
             return await this.Models.Include(m => m.Products).SingleOrDefaultAsync(m => m.id == id);
         }

@@ -21,11 +21,17 @@ namespace AdventureWorks.Web.Pages
         public Model Model { get; set; }
 
         [BindProperty, Required(ErrorMessage = "Please select a product.")]
-        public string SelectedProductId { get; set; } = String.Empty;
+        public Guid SelectedProductId { get; set; }
 
-        public async Task OnGetAsync(Guid id)
+        public async Task OnGetAsync(Guid id, string category)
         {
-            this.Model = await _productContext.FindModelAsync(id);
+            this.Model = await _productContext.FindModelAsync(id, category);
+        }
+
+        public async Task OnPostAsync()
+        {
+            var product = await _productContext.FindProductAsync(SelectedProductId);
+            await this.OnGetAsync(this.Model.id, this.Model.Category);
         }
     }
 }

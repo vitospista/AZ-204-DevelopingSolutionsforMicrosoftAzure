@@ -20,7 +20,7 @@
                 </p>
             </div>
             <div class="card-footer">
-                <a asp-page="@nameof(Details)" asp-route-id="@item.id" class="card-link">
+                <a asp-page="@nameof(Details)" asp-route-id="@item.id" asp-route-category="@item.Category" class="card-link">
                     View Details
                 </a>
             </div>
