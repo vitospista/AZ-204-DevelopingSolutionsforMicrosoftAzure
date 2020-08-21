@@ -1,0 +1,55 @@
+#shell script
+
+#Exercise 1: Create a VM by using the Azure CLI
+
+az group create -l westeurope -n lab5
+
+rg=$(az group list --query "[0].name" --output tsv)
+
+name="quickVM"
+
+az vm create --image debian -n $name -g $rg --authentication-type password --admin-password "StudentPa55w.rd" --admin-username "student" --size "Standard_B1s"
+
+ipAddress=$(az vm list-ip-addresses -g $rg -n $name --query '[].{ip:virtualMachine.network.publicIpAddresses[0].ipAddress}' --output tsv)
+
+ssh student@$ipAddress
+
+az group delete -n $rg --no-wait -y
+
+#Exercise 2: Create a Docker container image and deploy it to Container Registry
+
+$rg="ContainerCompute"
+
+az group create -n $rg -l westeurope
+
+##Check if name is available
+az acr check-name -n RegistryIstvan01
+
+$acr="RegistryIstvan01"
+
+##Create container registry
+az acr create -n $acr -g $rg --sku Basic
+
+##I can use jmespath function on list
+az acr list -g $rg --query "max_by([], &creationDate).name" --output tsv
+
+##Deploy a Docker container image to Container Registry
+az acr build --registry $acr --image ipcheck:latest . -g $rg
+
+#Exercise 3: Deploy an Azure container instance
+
+##Enable admin user on the registry
+Go to access keys and also take note of username and password
+
+##Create container of image
+az container create -n manualcompute -g $rg --memory 0.5 --registry-login-server registryistvan01.azurecr.io --registry-username RegistryIstvan01 --image registryistvan01.azurecr.io/ipcheck:latest
+
+###Insert registry password on prompt
+
+##If you made an error, you can delete the container like this:
+az container delete -g $rg --name manualcompute
+
+##Check outcome under Container Instances-Containers-Logs
+
+#Clean up
+az group delete --name ContainerCompute --no-wait --yes
