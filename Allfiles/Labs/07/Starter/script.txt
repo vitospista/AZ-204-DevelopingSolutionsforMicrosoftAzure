@@ -1,0 +1,25 @@
+#Create Resource Group
+$rg = "lab7"
+
+$location = "westeurope"
+
+az configure --defaults location=$location group=$rg
+
+az group create -n $rg
+
+#Create storage account
+$storName="storageistvan" 
+
+az storage account create -n  $storName --sku Standard_LRS
+
+#Create Blob storage container
+
+##Upload records.json
+
+#Create Key Vault
+
+##Save Storage Account Credentials
+
+#Create Function app
+
+##Add new Function
